@@ -54,6 +54,17 @@ public class Tests
         Assert.That(safe.DialPosition, Is.EqualTo(0));
         Assert.That(safe.SolutionCounter, Is.EqualTo(1));
     }
+    
+    [Test]
+    public void SafeDialPointingTwiceAt0()
+    {
+        Safe safe = new Safe();
+        safe.TurnDialRight(50);
+        safe.TurnDialRight(10);
+        safe.TurnDialLeft(10);
+        Assert.That(safe.DialPosition, Is.EqualTo(0));
+        Assert.That(safe.SolutionCounter, Is.EqualTo(2));
+    }
 }
 
 public class Safe
