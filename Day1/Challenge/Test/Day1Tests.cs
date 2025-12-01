@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace Test;
 
 public class Tests
@@ -65,11 +67,23 @@ public class Tests
         Assert.That(safe.DialPosition, Is.EqualTo(0));
         Assert.That(safe.SolutionCounter, Is.EqualTo(2));
     }
+    
+    [Test]
+    public void ConvertsCommandToDialTurn()
+    {
+        Safe safe = new Safe();
+        string command = "R11";
+        safe.ExecuteCommand(command);
+        Assert.That(safe.DialPosition, Is.EqualTo(61));
+        Assert.That(safe.SolutionCounter, Is.EqualTo(0));
+    }
 }
 
-public class Safe
+public partial class Safe
 {
     private const int SolutionDigit = 0;
+    private const string Left = "L";
+    private const string Right = "R";
     public int DialPosition { get; set; } = 50;
     public int SolutionCounter { get; set; }
 
@@ -92,4 +106,37 @@ public class Safe
             SolutionCounter++;
         }
     }
+
+    public void ExecuteCommand(string command)
+    {
+        var direction = GetDirectionFromCommand(command);
+        var value = GetValueFromCommand(command);
+        switch (direction)
+        {
+            case Left:
+                TurnDialLeft(value);
+                break;
+            case Right:
+                TurnDialRight(value);
+                break;
+        }
+    }
+
+    private static int GetValueFromCommand(string command)
+    {
+        var stringValue = ValueRegex().Match(command).Value;
+        var value = int.Parse(stringValue);
+        return value;
+    }
+
+    private static string GetDirectionFromCommand(string command)
+    {
+        return DirectionRegex().Match(command).Value.ToUpper();
+    }
+
+    [GeneratedRegex(@"^[a-zA-Z]")]
+    private static partial Regex DirectionRegex();
+    
+    [GeneratedRegex(@"[0-9]+")]
+    private static partial Regex ValueRegex();
 }
