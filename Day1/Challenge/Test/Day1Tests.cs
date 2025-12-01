@@ -77,6 +77,19 @@ public class Tests
         Assert.That(safe.DialPosition, Is.EqualTo(61));
         Assert.That(safe.SolutionCounter, Is.EqualTo(0));
     }
+    
+    [Test]
+    public void ReadsCommandsFromFileCorrectly()
+    {
+        Safe safe = new Safe();
+        const string testInputFilePath = "TestInput.txt";
+        foreach (var command in File.ReadLines(testInputFilePath))
+        {
+            safe.ExecuteCommand(command);
+        }
+        Assert.That(safe.DialPosition, Is.EqualTo(55));
+        Assert.That(safe.SolutionCounter, Is.EqualTo(1));
+    }
 }
 
 public partial class Safe
