@@ -90,6 +90,18 @@ public class Tests
         Assert.That(safe.DialPosition, Is.EqualTo(55));
         Assert.That(safe.SolutionCounter, Is.EqualTo(1));
     }
+    
+    [Test]
+    public void CalculatesSolutionCorrectly()
+    {
+        Safe safe = new Safe();
+        const string inputFilePath = "Day1Input.txt";
+        foreach (var command in File.ReadLines(inputFilePath))
+        {
+            safe.ExecuteCommand(command);
+        }
+        Assert.That(safe.SolutionCounter, Is.EqualTo(980));
+    }
 }
 
 public partial class Safe
