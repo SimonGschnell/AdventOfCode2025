@@ -30,4 +30,8 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Challenge\Challenge.csproj" />
+    </ItemGroup>
+
 </Project>

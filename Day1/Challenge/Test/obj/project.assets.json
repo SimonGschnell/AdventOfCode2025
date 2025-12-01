@@ -377,6 +377,16 @@
             "related": ".xml"
           }
         }
+      },
+      "Challenge/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/Challenge.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Challenge.dll": {}
+        }
       }
     }
   },
@@ -970,10 +980,16 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "Challenge/1.0.0": {
+      "type": "project",
+      "path": "../Challenge/Challenge.csproj",
+      "msbuildProject": "../Challenge/Challenge.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "Challenge >= 1.0.0",
       "Microsoft.NET.Test.Sdk >= 17.8.0",
       "NUnit >= 3.14.0",
       "NUnit.Analyzers >= 3.9.0",
@@ -1013,7 +1029,11 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Simon\\RiderProjects\\AdventOfCode2025\\Day1\\Challenge\\Challenge\\Challenge.csproj": {
+              "projectPath": "C:\\Users\\Simon\\RiderProjects\\AdventOfCode2025\\Day1\\Challenge\\Challenge\\Challenge.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
