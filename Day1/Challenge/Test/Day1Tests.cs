@@ -21,6 +21,14 @@ public class Tests
         safe.TurnDialRight(10);
         Assert.That(safe.DialPosition, Is.EqualTo(60));
     }
+    
+    [Test]
+    public void TurnSafeDialLeftBy15()
+    {
+        Safe safe = new Safe();
+        safe.TurnDialLeft(15);
+        Assert.That(safe.DialPosition, Is.EqualTo(35));
+    }
 }
 
 public class Safe
@@ -30,5 +38,10 @@ public class Safe
     public void TurnDialRight(int value)
     {
         DialPosition += value;
+    }
+
+    public void TurnDialLeft(int value)
+    {
+        DialPosition -= value;
     }
 }
