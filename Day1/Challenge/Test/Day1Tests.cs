@@ -1,0 +1,29 @@
+namespace Test;
+
+public class Tests
+{
+    [SetUp]
+    public void Setup()
+    {
+    }
+    
+    [Test]
+    public void SafeDialStartsAt50()
+    {
+        var safe = new Safe();
+        Assert.That(safe.DialPosition, Is.EqualTo(50));
+    }
+
+    // [Test]
+    // public void TurnSafeDialRightBy10()
+    // {
+    //     Safe safe = new Safe();
+    //     safe.TurnDialRight(10);
+    //     Assert.That(safe.DialPosition, Is.EqualTo(60));
+    // }
+}
+
+public class Safe
+{
+    public int DialPosition { get; set; } = 50;
+}
