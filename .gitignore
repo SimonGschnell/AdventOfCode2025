@@ -1,0 +1,23 @@
+# Ignore IDE metadata
+.idea/
+
+# Build artifacts
+bin/
+obj/
+
+# User-specific Rider settings
+*.DotSettings.user
+
+# NuGet generated/cache files
+*.nuget.*
+*.cache
+project.assets.json
+
+# Test host binaries
+/testhost.*
+
+# Logs
+*.log
+
+# Misc
+*.user
