@@ -80,8 +80,8 @@ public class Tests
         ProductIdRanges productRanges = new ProductIdRanges(ranges);
         Assert.That(productRanges.GetSumOfInvalidIds(), Is.EqualTo(54234399924));
     }
+    
 }
-
 
 public class ProductIdRanges(List<ProductIdRange> ranges)
 {
