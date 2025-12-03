@@ -7,16 +7,15 @@ public class BatteryBank(List<Battery> batteries)
     public long GetJoltage(int numberOfBatteriesToTurnOn=2)
     {
         var accumulatedResult = new List<int>();
-        var subarrayForNextNumber = Batteries.Slice(0, Batteries.Count - RangeToFindNextNumber(numberOfBatteriesToTurnOn, accumulatedResult));
         var currentPosition = 0;
+        var subarrayForNextNumber = Batteries.Slice(currentPosition, Batteries.Count - RangeToFindNextNumber(numberOfBatteriesToTurnOn, accumulatedResult));
         while(accumulatedResult.Count != numberOfBatteriesToTurnOn)
         {
             var (greatestNumber, index) = GreatestNumberOfSubArray(subarrayForNextNumber);
             currentPosition += index + 1;
             accumulatedResult.Add(greatestNumber);
-            var batteriesLeftToTurn = Batteries.Count-currentPosition;
             if (accumulatedResult.Count == numberOfBatteriesToTurnOn) continue;
-            if (numberOfBatteriesToTurnOn - accumulatedResult.Count == Batteries.Slice(currentPosition,batteriesLeftToTurn).Count)
+            if (numberOfBatteriesToTurnOn - accumulatedResult.Count == Batteries.Slice(currentPosition,BatteriesLeftToTurn(currentPosition)).Count)
             {
                 for (int i = currentPosition; i < Batteries.Count; i++)
                 {
@@ -25,9 +24,14 @@ public class BatteryBank(List<Battery> batteries)
                 continue;
             }
 
-            subarrayForNextNumber =  Batteries.Slice(currentPosition, batteriesLeftToTurn - RangeToFindNextNumber(numberOfBatteriesToTurnOn, accumulatedResult));
+            subarrayForNextNumber =  Batteries.Slice(currentPosition, BatteriesLeftToTurn(currentPosition) - RangeToFindNextNumber(numberOfBatteriesToTurnOn, accumulatedResult));
         } 
         return ConcatenatedResult(accumulatedResult);
+    }
+
+    private int BatteriesLeftToTurn(int currentPosition)
+    {
+        return Batteries.Count-currentPosition;
     }
 
     private static int RangeToFindNextNumber(int numberOfBatteriesToTurnOn, List<int> accumulatedResult)
