@@ -15,10 +15,7 @@ public class BatteryBank(List<Battery> batteries)
             currentPosition += indexToAdvance + 1;
             if (GetRemainingBatteriesToTurnOn(numberOfBatteriesToTurnOn) == BatteriesLeftToTurn(currentPosition))
             {
-                foreach (var battery in Batteries.Skip(currentPosition))
-                {
-                    AccumulatedResult.Add(battery.Joltage);
-                }
+                Batteries.Skip(currentPosition).ToList().ForEach(battery => AccumulatedResult.Add(battery.Joltage));
             }
         } 
         
