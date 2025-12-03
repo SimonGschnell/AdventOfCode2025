@@ -13,7 +13,7 @@ public class BatteryBank(List<Battery> batteries)
             var (greatestNumber, indexToAdvance) = GreatestNumberOfSubArray(GetSubArrayForNextNumber(numberOfBatteriesToTurnOn, currentPosition));
             AccumulatedResult.Add(greatestNumber);
             currentPosition += indexToAdvance + 1;
-            if (GetRemainingBatteriesToTurnOn(numberOfBatteriesToTurnOn) == Batteries.Count - currentPosition)
+            if (GetRemainingBatteriesToTurnOn(numberOfBatteriesToTurnOn) == BatteriesLeftToTurn(currentPosition))
             {
                 for (var index = currentPosition; index < Batteries.Count; index++)
                 {
