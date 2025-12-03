@@ -8,10 +8,9 @@ public class BatteryBank(List<Battery> batteries)
     {
         List<int> accumulatedResult = [];
         var currentPosition = 0;
-        var subarrayForNextNumber = GetSubArrayForNextNumber(numberOfBatteriesToTurnOn, currentPosition, accumulatedResult);
         while(accumulatedResult.Count != numberOfBatteriesToTurnOn)
         {
-            var (greatestNumber, index) = GreatestNumberOfSubArray(subarrayForNextNumber);
+            var (greatestNumber, index) = GreatestNumberOfSubArray(GetSubArrayForNextNumber(numberOfBatteriesToTurnOn, currentPosition, accumulatedResult));
             currentPosition += index + 1;
             accumulatedResult.Add(greatestNumber);
             if (accumulatedResult.Count == numberOfBatteriesToTurnOn) continue;
@@ -21,10 +20,8 @@ public class BatteryBank(List<Battery> batteries)
                 {
                     accumulatedResult.Add(Batteries[i].Joltage);
                 }
-                continue;
             }
 
-            subarrayForNextNumber =  GetSubArrayForNextNumber(numberOfBatteriesToTurnOn, currentPosition, accumulatedResult);
         } 
         return ConcatenatedResult(accumulatedResult);
     }
