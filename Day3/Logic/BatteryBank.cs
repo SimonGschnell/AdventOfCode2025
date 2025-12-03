@@ -15,23 +15,19 @@ public class BatteryBank(List<Battery> batteries)
             currentPosition += index + 1;
             accumulatedResult.Add(greatestNumber);
             var lengthToEnd = Batteries.Count-(currentPosition);
+
+            if (accumulatedResult.Count == numberOfBatteriesToTurnOn) continue;
             if (numberOfBatteriesToTurnOn - accumulatedResult.Count == Batteries.Slice(currentPosition,lengthToEnd).Count)
             {
-                if (accumulatedResult.Count() != numberOfBatteriesToTurnOn)
+                for (int i = currentPosition; i < Batteries.Count; i++)
                 {
-                    for (int i = currentPosition; i < Batteries.Count; i++)
-                    {
-                        accumulatedResult.Add(Batteries[i].Joltage);
-                    }
+                    accumulatedResult.Add(Batteries[i].Joltage);
                 }
-                break;
+                continue;
             }
+            subarrayForNextNumber =  Batteries.Slice(currentPosition, (Batteries.Count- (currentPosition)) - (numberOfBatteriesToTurnOn - 1 - accumulatedResult.Count));
 
-            if (accumulatedResult.Count != numberOfBatteriesToTurnOn)
-            {
-                subarrayForNextNumber =  Batteries.Slice(currentPosition, (Batteries.Count- (currentPosition)) - (numberOfBatteriesToTurnOn - 1 - accumulatedResult.Count));
-            }
-            
+
         } 
         
         return ConcatenatedResult(accumulatedResult);
