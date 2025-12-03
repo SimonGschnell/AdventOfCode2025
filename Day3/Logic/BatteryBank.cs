@@ -2,7 +2,7 @@ namespace Logic;
 
 public class BatteryBank(List<Battery> batteries)
 {
-    public List<int> AccumulatedResult { get; } = [];
+    private List<int> AccumulatedResult { get; } = [];
     public List<Battery> Batteries { get; } = batteries;
 
     public long GetJoltage(int numberOfBatteriesToTurnOn=2)
@@ -10,19 +10,39 @@ public class BatteryBank(List<Battery> batteries)
         var currentPosition = 0;
         while(AccumulatedResult.Count != numberOfBatteriesToTurnOn)
         {
-            var (greatestNumber, indexToAdvance) = GreatestNumberOfSubArray(GetSubArrayForNextNumber(numberOfBatteriesToTurnOn, currentPosition, AccumulatedResult));
+            var (greatestNumber, indexToAdvance) = GreatestNumberOfSubArray(GetSubArrayForNextNumber(numberOfBatteriesToTurnOn, currentPosition));
             AccumulatedResult.Add(greatestNumber);
             currentPosition += indexToAdvance + 1;
             if (GetRemainingBatteriesToTurnOn(numberOfBatteriesToTurnOn) == Batteries.Count - currentPosition)
             {
-                for (var i = currentPosition; i < Batteries.Count; i++)
+                for (var index = currentPosition; index < Batteries.Count; index++)
                 {
-                    AccumulatedResult.Add(Batteries[i].Joltage);
+                    AccumulatedResult.Add(GetBatteryJoltage(index));
                 }
             }
         } 
         
-        return ConcatenatedResult(AccumulatedResult);
+        return ConcatenatedResult();
+    }
+
+    public int GetBatteryJoltage(int index)
+    {
+        return Batteries[index].Joltage;
+    }
+
+    private long ConcatenatedResult()
+    {
+        var result = "";
+        foreach (var number in AccumulatedResult)
+        {
+            result += number.ToString();
+        }
+        return long.Parse(result);
+    }
+
+    private List<Battery> GetSubArrayForNextNumber(int numberOfBatteriesToTurnOn, int currentPosition)
+    {
+        return Batteries.Slice(currentPosition, BatteriesLeftToTurn(currentPosition) - RangeToFindNextNumber(numberOfBatteriesToTurnOn, AccumulatedResult));
     }
 
     private int GetRemainingBatteriesToTurnOn(int numberOfBatteriesToTurnOn)
@@ -35,11 +55,6 @@ public class BatteryBank(List<Battery> batteries)
         return numberOfBatteriesToTurnOn - accumulatedResult.Count;
     }
 
-    private List<Battery> GetSubArrayForNextNumber(int numberOfBatteriesToTurnOn, int currentPosition, List<int> accumulatedResult)
-    {
-        return Batteries.Slice(currentPosition, BatteriesLeftToTurn(currentPosition) - RangeToFindNextNumber(numberOfBatteriesToTurnOn, accumulatedResult));
-    }
-
     private int BatteriesLeftToTurn(int currentPosition)
     {
         return Batteries.Count-currentPosition;
@@ -48,16 +63,6 @@ public class BatteryBank(List<Battery> batteries)
     private static int RangeToFindNextNumber(int numberOfBatteriesToTurnOn, List<int> accumulatedResult)
     {
         return GetRemainingBatteriesToTurnOn(numberOfBatteriesToTurnOn, accumulatedResult) - 1;
-    }
-
-    private static long ConcatenatedResult(List<int> accumulatedResult)
-    {
-        var result = "";
-        foreach (var number in accumulatedResult)
-        {
-            result += number.ToString();
-        }
-        return long.Parse(result);
     }
 
     private static (int greatestNumber, int greatestIndex) GreatestNumberOfSubArray(List<Battery> subarray)
