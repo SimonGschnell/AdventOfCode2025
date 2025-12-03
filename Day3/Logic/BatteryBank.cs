@@ -51,12 +51,11 @@ public class BatteryBank
 
     public static BatteryBank Create(string batteryBankString)
     {
-        var batteryBank = new BatteryBank([]);
+        List<Battery> batteries = [];
         foreach (var batteryCharacter in batteryBankString)
         {
-            batteryBank.Batteries.Add(new Battery(int.Parse(batteryCharacter.ToString())));
+            batteries.Add(new Battery(int.Parse(batteryCharacter.ToString())));
         }
-
-        return batteryBank;
+        return new BatteryBank(batteries);
     }
 }
