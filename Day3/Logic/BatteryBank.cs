@@ -7,8 +7,7 @@ public class BatteryBank(List<Battery> batteries)
     public long GetJoltage(int numberOfBatteriesToTurnOn=2)
     {
         var accumulatedResult = new List<int>();
-        var rangeToFindNextNumber = numberOfBatteriesToTurnOn - 1;
-        var subarrayForNextNumber = Batteries.Slice(0, Batteries.Count - rangeToFindNextNumber);
+        var subarrayForNextNumber = Batteries.Slice(0, Batteries.Count - RangeToFindNextNumber(numberOfBatteriesToTurnOn, accumulatedResult));
         var currentPosition = 0;
         while(accumulatedResult.Count != numberOfBatteriesToTurnOn)
         {
@@ -25,9 +24,15 @@ public class BatteryBank(List<Battery> batteries)
                 }
                 continue;
             }
-            subarrayForNextNumber =  Batteries.Slice(currentPosition, batteriesLeftToTurn - (rangeToFindNextNumber - accumulatedResult.Count));
+
+            subarrayForNextNumber =  Batteries.Slice(currentPosition, batteriesLeftToTurn - RangeToFindNextNumber(numberOfBatteriesToTurnOn, accumulatedResult));
         } 
         return ConcatenatedResult(accumulatedResult);
+    }
+
+    private static int RangeToFindNextNumber(int numberOfBatteriesToTurnOn, List<int> accumulatedResult)
+    {
+        return numberOfBatteriesToTurnOn - 1 - accumulatedResult.Count;
     }
 
     private static long ConcatenatedResult(List<int> accumulatedResult)
