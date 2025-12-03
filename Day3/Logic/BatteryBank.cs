@@ -1,55 +1,50 @@
 namespace Logic;
 
-public class BatteryBank
+public class BatteryBank(List<Battery> batteries)
 {
-    public List<Battery> Batteries { get; }
+    public List<Battery> Batteries { get; } = batteries;
 
-    public BatteryBank(List<Battery> batteries)
-    {
-        Batteries = batteries;
-    }
-
-    public long GetJoltage(int N=2)
+    public long GetJoltage(int numberOfBatteriesToTurnOn=2)
     {
         var accumulatedResult = new List<int>();
-        var subarrayForNextNumber = Batteries.Slice(0, Batteries.Count - (N - 1));
+        var subarrayForNextNumber = Batteries.Slice(0, Batteries.Count - (numberOfBatteriesToTurnOn - 1));
         var currentPosition = 0;
-        while(true)
+        while(accumulatedResult.Count != numberOfBatteriesToTurnOn)
         {
             var (greatestNumber, index) = GreatestNumberOfSubArray(subarrayForNextNumber);
             currentPosition += index + 1;
             accumulatedResult.Add(greatestNumber);
             var lengthToEnd = Batteries.Count-(currentPosition);
-            if (accumulatedResult.Count == N || N_MoreNumbersToCollect(N, accumulatedResult) == Batteries.Slice(currentPosition,lengthToEnd).Count)
+            if (numberOfBatteriesToTurnOn - accumulatedResult.Count == Batteries.Slice(currentPosition,lengthToEnd).Count)
             {
+                if (accumulatedResult.Count() != numberOfBatteriesToTurnOn)
+                {
+                    for (int i = currentPosition; i < Batteries.Count; i++)
+                    {
+                        accumulatedResult.Add(Batteries[i].Joltage);
+                    }
+                }
                 break;
             }
 
-            
-            subarrayForNextNumber =  Batteries.Slice(currentPosition, (Batteries.Count- (currentPosition)) - (N - 1 - accumulatedResult.Count));
-        } 
-
-        if (accumulatedResult.Count() != N)
-        {
-            for (int i = currentPosition; i < Batteries.Count; i++)
+            if (accumulatedResult.Count != numberOfBatteriesToTurnOn)
             {
-                accumulatedResult.Add(Batteries[i].Joltage);
+                subarrayForNextNumber =  Batteries.Slice(currentPosition, (Batteries.Count- (currentPosition)) - (numberOfBatteriesToTurnOn - 1 - accumulatedResult.Count));
             }
-        }
-
-        var res = "";
-        foreach (var i in accumulatedResult)
-        {
-            res += i.ToString();
-        }
-
-        return long.Parse(res);
-
+            
+        } 
+        
+        return ConcatenatedResult(accumulatedResult);
     }
 
-    private static int N_MoreNumbersToCollect(int n, List<int> result)
+    private static long ConcatenatedResult(List<int> accumulatedResult)
     {
-        return n - result.Count;
+        var result = "";
+        foreach (var number in accumulatedResult)
+        {
+            result += number.ToString();
+        }
+        return long.Parse(result);
     }
 
     private static (int greatestNumber, int greatestIndex) GreatestNumberOfSubArray(List<Battery> subarray)
@@ -66,36 +61,6 @@ public class BatteryBank
         }
 
         return (greatestNumber, greatestIndex);
-    }
-
-    private int GetGreatestBatteryCombination(Battery firstBattery)
-    {
-        var greatesBatteryCombination = 0;
-        foreach (var secondBattery in Batteries)
-        {
-            if (secondBattery == firstBattery || PositionOfFirstBatteryIsGreaterThenSecondBattery(firstBattery, secondBattery))
-            {
-                continue;
-            }
-
-            var batteriesJoltage = GetBatteryJoltageFor2Batteries(firstBattery, secondBattery);
-            if (batteriesJoltage > greatesBatteryCombination)
-            {
-                greatesBatteryCombination = batteriesJoltage;
-            }
-        }
-
-        return greatesBatteryCombination;
-    }
-
-    private static int GetBatteryJoltageFor2Batteries(Battery firstBattery, Battery secondBattery)
-    {
-        return int.Parse($"{firstBattery.Joltage}{secondBattery.Joltage}");
-    }
-
-    private bool PositionOfFirstBatteryIsGreaterThenSecondBattery(Battery firstBattery, Battery secondBattery)
-    {
-        return Batteries.IndexOf(firstBattery) > Batteries.IndexOf(secondBattery);
     }
 
     public static BatteryBank Create(string batteryBankString)
