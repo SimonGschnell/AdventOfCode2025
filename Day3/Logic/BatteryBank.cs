@@ -11,43 +11,34 @@ public class BatteryBank
 
     public long GetJoltage(int N=2)
     {
-        //818181911112111
-        var greatesBatteryCombination = 0;
-        
-        
-        var result = new List<int>();
-
-        var numbersToCollectLeft = 0;
-        var rangeWhereToFindNextNumber = Batteries.Slice(0, Batteries.Count - (N - 1));
-        var lastIndex = 0;
-        var nextIndex = 0;
+        var accumulatedResult = new List<int>();
+        var subarrayForNextNumber = Batteries.Slice(0, Batteries.Count - (N - 1));
+        var currentPosition = 0;
         while(true)
         {
-            var (greatestNumber, greatestIndex) = GreatestNumber(rangeWhereToFindNextNumber);
-            nextIndex = nextIndex + greatestIndex + 1;
-            result.Add(greatestNumber);
-            numbersToCollectLeft = N - result.Count;
-            var lengthToEnd = Batteries.Count-(nextIndex);
-            lastIndex = nextIndex-1;
-            if (result.Count == N || numbersToCollectLeft == Batteries.Slice(nextIndex,lengthToEnd).Count)
+            var (greatestNumber, index) = GreatestNumberOfSubArray(subarrayForNextNumber);
+            currentPosition += index + 1;
+            accumulatedResult.Add(greatestNumber);
+            var lengthToEnd = Batteries.Count-(currentPosition);
+            if (accumulatedResult.Count == N || N_MoreNumbersToCollect(N, accumulatedResult) == Batteries.Slice(currentPosition,lengthToEnd).Count)
             {
                 break;
             }
 
             
-            rangeWhereToFindNextNumber =  Batteries.Slice(nextIndex, (Batteries.Count- (nextIndex)) - (N - 1 - result.Count));
+            subarrayForNextNumber =  Batteries.Slice(currentPosition, (Batteries.Count- (currentPosition)) - (N - 1 - accumulatedResult.Count));
         } 
 
-        if (result.Count() != N)
+        if (accumulatedResult.Count() != N)
         {
-            for (int i = lastIndex+1; i < Batteries.Count; i++)
+            for (int i = currentPosition; i < Batteries.Count; i++)
             {
-                result.Add(Batteries[i].Joltage);
+                accumulatedResult.Add(Batteries[i].Joltage);
             }
         }
 
         var res = "";
-        foreach (var i in result)
+        foreach (var i in accumulatedResult)
         {
             res += i.ToString();
         }
@@ -56,7 +47,12 @@ public class BatteryBank
 
     }
 
-    private static (int greatestNumber, int greatestIndex) GreatestNumber(List<Battery> subarray)
+    private static int N_MoreNumbersToCollect(int n, List<int> result)
+    {
+        return n - result.Count;
+    }
+
+    private static (int greatestNumber, int greatestIndex) GreatestNumberOfSubArray(List<Battery> subarray)
     {
         var greatestNumber = 0;
         var greatestIndex = 0;
