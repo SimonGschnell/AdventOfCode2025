@@ -13,7 +13,7 @@ public class BatteryBank(List<Battery> batteries)
             var (greatestNumber, indexToAdvance) = GreatestNumberOfSubArray(GetSubArrayForNextNumber(numberOfBatteriesToTurnOn, currentPosition));
             AccumulatedResult.Add(greatestNumber);
             currentPosition += indexToAdvance + 1;
-            if (GetRemainingBatteriesToTurnOn(numberOfBatteriesToTurnOn) == BatteriesLeftToTurn(currentPosition))
+            if (RemainingBatteriesToTurnOn(numberOfBatteriesToTurnOn) == BatteriesLeftToTurn(currentPosition))
             {
                 Batteries.Skip(currentPosition).ToList().ForEach(battery => AccumulatedResult.Add(battery.Joltage));
             }
@@ -37,7 +37,7 @@ public class BatteryBank(List<Battery> batteries)
         return Batteries.Slice(currentPosition, BatteriesLeftToTurn(currentPosition) - RangeToFindNextNumber(numberOfBatteriesToTurnOn));
     }
 
-    private int GetRemainingBatteriesToTurnOn(int numberOfBatteriesToTurnOn)
+    private int RemainingBatteriesToTurnOn(int numberOfBatteriesToTurnOn)
     {
         return numberOfBatteriesToTurnOn - AccumulatedResult.Count;
     }
@@ -49,7 +49,7 @@ public class BatteryBank(List<Battery> batteries)
 
     private int RangeToFindNextNumber(int numberOfBatteriesToTurnOn)
     {
-        return GetRemainingBatteriesToTurnOn(numberOfBatteriesToTurnOn) - 1;
+        return RemainingBatteriesToTurnOn(numberOfBatteriesToTurnOn) - 1;
     }
 
     private static (int greatestNumber, int greatestIndex) GreatestNumberOfSubArray(List<Battery> subarray)
