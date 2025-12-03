@@ -15,19 +15,14 @@ public class BatteryBank(List<Battery> batteries)
             currentPosition += indexToAdvance + 1;
             if (GetRemainingBatteriesToTurnOn(numberOfBatteriesToTurnOn) == BatteriesLeftToTurn(currentPosition))
             {
-                for (var index = currentPosition; index < Batteries.Count; index++)
+                foreach (var battery in Batteries.Skip(currentPosition))
                 {
-                    AccumulatedResult.Add(GetBatteryJoltage(index));
+                    AccumulatedResult.Add(battery.Joltage);
                 }
             }
         } 
         
         return ConcatenatedResult();
-    }
-
-    public int GetBatteryJoltage(int index)
-    {
-        return Batteries[index].Joltage;
     }
 
     private long ConcatenatedResult()
