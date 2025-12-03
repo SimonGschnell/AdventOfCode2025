@@ -10,19 +10,19 @@ public class BatteryBank(List<Battery> batteries)
         var currentPosition = 0;
         while(accumulatedResult.Count != numberOfBatteriesToTurnOn)
         {
-            var (greatestNumber, index) = GreatestNumberOfSubArray(GetSubArrayForNextNumber(numberOfBatteriesToTurnOn, currentPosition, accumulatedResult));
-            currentPosition += index + 1;
+            var (greatestNumber, indexToAdvance) = GreatestNumberOfSubArray(GetSubArrayForNextNumber(numberOfBatteriesToTurnOn, currentPosition, accumulatedResult));
             accumulatedResult.Add(greatestNumber);
-            if (accumulatedResult.Count == numberOfBatteriesToTurnOn) continue;
-            if (numberOfBatteriesToTurnOn - accumulatedResult.Count == Batteries.Slice(currentPosition,BatteriesLeftToTurn(currentPosition)).Count)
-            {
-                for (int i = currentPosition; i < Batteries.Count; i++)
-                {
-                    accumulatedResult.Add(Batteries[i].Joltage);
-                }
-            }
-
+            currentPosition += indexToAdvance + 1;
+            
+                
         } 
+        if (numberOfBatteriesToTurnOn - accumulatedResult.Count == Batteries.Slice(currentPosition, BatteriesLeftToTurn(currentPosition)).Count)
+        {
+            for (var i = currentPosition; i < Batteries.Count; i++)
+            {
+                accumulatedResult.Add(Batteries[i].Joltage);
+            }
+        }
         return ConcatenatedResult(accumulatedResult);
     }
 
