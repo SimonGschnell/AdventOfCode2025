@@ -11,35 +11,47 @@ public class BatteryBank
 
     public int GetJoltage()
     {
-        int greatesBatteryCombination = 0;
+        var greatesBatteryCombination = 0;
         foreach (var firstBattery in Batteries)
         {
-            foreach (var secondBattery in Batteries)
-            {
-                if (secondBattery == firstBattery || Batteries.IndexOf(firstBattery) > Batteries.IndexOf(secondBattery))
-                {
-                    continue;
-                }
+            greatesBatteryCombination = GetGreatestBatteryCombination(firstBattery);
+        }
+        return greatesBatteryCombination;
+    }
 
-                var batteriesJoltage = int.Parse($"{firstBattery.Joltage}{secondBattery.Joltage}");
-                if (batteriesJoltage > greatesBatteryCombination)
-                {
-                    greatesBatteryCombination = batteriesJoltage;
-                }
+    private int GetGreatestBatteryCombination(Battery firstBattery)
+    {
+        var greatesBatteryCombination = 0;
+        foreach (var secondBattery in Batteries)
+        {
+            if (secondBattery == firstBattery || PositionOfFirstBatteryIsGreaterThenSecondBattery(firstBattery, secondBattery))
+            {
+                continue;
+            }
+
+            var batteriesJoltage = GetBatteryJoltageFor2Batteries(firstBattery, secondBattery);
+            if (batteriesJoltage > greatesBatteryCombination)
+            {
+                greatesBatteryCombination = batteriesJoltage;
             }
         }
 
         return greatesBatteryCombination;
     }
 
-    private int GetBatteryJoltage(int position)
+    private static int GetBatteryJoltageFor2Batteries(Battery firstBattery, Battery secondBattery)
     {
-        return Batteries[position].Joltage;
+        return int.Parse($"{firstBattery.Joltage}{secondBattery.Joltage}");
+    }
+
+    private bool PositionOfFirstBatteryIsGreaterThenSecondBattery(Battery firstBattery, Battery secondBattery)
+    {
+        return Batteries.IndexOf(firstBattery) > Batteries.IndexOf(secondBattery);
     }
 
     public static BatteryBank Create(string batteryBankString)
     {
-        BatteryBank batteryBank = new BatteryBank([]);
+        var batteryBank = new BatteryBank([]);
         foreach (var batteryCharacter in batteryBankString)
         {
             batteryBank.Batteries.Add(new Battery(int.Parse(batteryCharacter.ToString())));
