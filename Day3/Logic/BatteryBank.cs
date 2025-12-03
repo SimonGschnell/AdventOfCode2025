@@ -71,10 +71,7 @@ public class BatteryBank(List<Battery> batteries)
     public static BatteryBank Create(string batteryBankString)
     {
         List<Battery> batteries = [];
-        foreach (var batteryCharacter in batteryBankString)
-        {
-            batteries.Add(new Battery(int.Parse(batteryCharacter.ToString())));
-        }
+        batteries.AddRange(batteryBankString.Select(batteryCharacter => new Battery(int.Parse(batteryCharacter.ToString()))));
         return new BatteryBank(batteries);
     }
 }
