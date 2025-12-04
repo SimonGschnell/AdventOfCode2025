@@ -74,12 +74,33 @@ public class Tests
     }
     
     [Test]
-    public void CorrectlyCalculatesTheChallengeTestSets()
+    public void CorrectlyCalculatesTheChallengePart1TestSets()
     {
         Assert.That(BatteryBank.Create("987654321111111").GetJoltage(), Is.EqualTo(98));
         Assert.That(BatteryBank.Create("811111111111119").GetJoltage(), Is.EqualTo(89));
         Assert.That(BatteryBank.Create("234234234234278").GetJoltage(), Is.EqualTo(78));
         Assert.That(BatteryBank.Create("818181911112111").GetJoltage(), Is.EqualTo(92));
+    }
+    
+    [Test]
+    public void CorrectlyCalculatesTheChallengePart2TestSets()
+    {
+        Assert.That(BatteryBank.Create("987654321111111").GetJoltage(12), Is.EqualTo(987654321111));
+        Assert.That(BatteryBank.Create("811111111111119").GetJoltage(12), Is.EqualTo(811111111119));
+        Assert.That(BatteryBank.Create("234234234234278").GetJoltage(12), Is.EqualTo(434234234278));
+        Assert.That(BatteryBank.Create("818181911112111").GetJoltage(12), Is.EqualTo(888911112111));
+    }
+    
+    [Test]
+    public void CorrectlyCalculatesTheResultsOfDay3ChallengePart2()
+    {
+        BatteryCluster cluster = new BatteryCluster([]);
+        foreach (var batteries in File.ReadAllLines("Day3Input.txt"))
+        {
+            cluster.BatteryBanks.Add(BatteryBank.Create(batteries));
+        }
+
+        Assert.That(cluster.GetJoltage(12), Is.EqualTo(170449335646486));
     }
     
     [Test]

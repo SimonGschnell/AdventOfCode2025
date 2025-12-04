@@ -1,61 +1,77 @@
 namespace Logic;
 
-public class BatteryBank
+public class BatteryBank(List<Battery> batteries)
 {
-    public List<Battery> Batteries { get; }
+    private List<int> AccumulatedResult { get; } = [];
+    public List<Battery> Batteries { get; } = batteries;
 
-    public BatteryBank(List<Battery> batteries)
+    public long GetJoltage(int numberOfBatteriesToTurnOn=2)
     {
-        Batteries = batteries;
-    }
-
-    public int GetJoltage()
-    {
-        var greatesBatteryCombination = 0;
-        foreach (var firstBattery in Batteries)
+        var currentPosition = 0;
+        while(AccumulatedResult.Count != numberOfBatteriesToTurnOn)
         {
-            greatesBatteryCombination = GetGreatestBatteryCombination(firstBattery);
-        }
-        return greatesBatteryCombination;
+            var (greatestNumber, indexToAdvance) = GreatestNumberOfSubArray(GetSubArrayForNextNumber(numberOfBatteriesToTurnOn, currentPosition));
+            AccumulatedResult.Add(greatestNumber);
+            currentPosition += indexToAdvance + 1;
+            if (RemainingBatteriesToTurnOn(numberOfBatteriesToTurnOn) == BatteriesLeftToTurn(currentPosition))
+            {
+                Batteries.Skip(currentPosition).ToList().ForEach(battery => AccumulatedResult.Add(battery.Joltage));
+            }
+        } 
+        
+        return ConcatenatedResult();
     }
 
-    private int GetGreatestBatteryCombination(Battery firstBattery)
+    private long ConcatenatedResult()
     {
-        var greatesBatteryCombination = 0;
-        foreach (var secondBattery in Batteries)
+        var result = "";
+        foreach (var number in AccumulatedResult)
         {
-            if (secondBattery == firstBattery || PositionOfFirstBatteryIsGreaterThenSecondBattery(firstBattery, secondBattery))
-            {
-                continue;
-            }
+            result += number.ToString();
+        }
+        return long.Parse(result);
+    }
 
-            var batteriesJoltage = GetBatteryJoltageFor2Batteries(firstBattery, secondBattery);
-            if (batteriesJoltage > greatesBatteryCombination)
+    private List<Battery> GetSubArrayForNextNumber(int numberOfBatteriesToTurnOn, int currentPosition)
+    {
+        return Batteries.Slice(currentPosition, BatteriesLeftToTurn(currentPosition) - RangeToFindNextNumber(numberOfBatteriesToTurnOn));
+    }
+
+    private int RemainingBatteriesToTurnOn(int numberOfBatteriesToTurnOn)
+    {
+        return numberOfBatteriesToTurnOn - AccumulatedResult.Count;
+    }
+
+    private int BatteriesLeftToTurn(int currentPosition)
+    {
+        return Batteries.Count-currentPosition;
+    }
+
+    private int RangeToFindNextNumber(int numberOfBatteriesToTurnOn)
+    {
+        return RemainingBatteriesToTurnOn(numberOfBatteriesToTurnOn) - 1;
+    }
+
+    private static (int greatestNumber, int greatestIndex) GreatestNumberOfSubArray(List<Battery> subarray)
+    {
+        var greatestNumber = 0;
+        var greatestIndex = 0;
+        for(var index =0; index < subarray.Count; index++)
+        {
+            if (subarray[index].Joltage > greatestNumber)
             {
-                greatesBatteryCombination = batteriesJoltage;
+                greatestNumber = subarray[index].Joltage;
+                greatestIndex = index;
             }
         }
 
-        return greatesBatteryCombination;
-    }
-
-    private static int GetBatteryJoltageFor2Batteries(Battery firstBattery, Battery secondBattery)
-    {
-        return int.Parse($"{firstBattery.Joltage}{secondBattery.Joltage}");
-    }
-
-    private bool PositionOfFirstBatteryIsGreaterThenSecondBattery(Battery firstBattery, Battery secondBattery)
-    {
-        return Batteries.IndexOf(firstBattery) > Batteries.IndexOf(secondBattery);
+        return (greatestNumber, greatestIndex);
     }
 
     public static BatteryBank Create(string batteryBankString)
     {
         List<Battery> batteries = [];
-        foreach (var batteryCharacter in batteryBankString)
-        {
-            batteries.Add(new Battery(int.Parse(batteryCharacter.ToString())));
-        }
+        batteries.AddRange(batteryBankString.Select(batteryCharacter => new Battery(int.Parse(batteryCharacter.ToString()))));
         return new BatteryBank(batteries);
     }
 }

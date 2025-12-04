@@ -9,8 +9,8 @@ public class BatteryCluster
         BatteryBanks = batteryBanks;
     }
 
-    public int GetJoltage()
+    public long GetJoltage(int N =2)
     {
-        return BatteryBanks.Sum(batteryBank => batteryBank.GetJoltage());
+        return BatteryBanks.Sum(batteryBank => batteryBank.GetJoltage(N));
     }
 }
