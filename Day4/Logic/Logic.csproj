@@ -6,6 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsPackable>false</IsPackable>
+        <RootNamespace>Day4</RootNamespace>
+        <AssemblyName>Logic</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
