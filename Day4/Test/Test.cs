@@ -12,39 +12,81 @@ public class Test
     [Test]
     public void GridIsCreatedCorrected()
     {
-        Grid grid = new Grid(".@." +
-                             "@@.");
+        Grid grid = new Grid([".@.","@@."]);
         Assert.That(grid.Rows , Is.EqualTo(2));
-        Assert.That(grid.Get(new Position(1, 1)).State , Is.EqualTo(PaperRollState.Empty));
+        Assert.That(grid.Get(new Position(0,0)).State , Is.EqualTo(PaperRollState.Empty));
     }
     
     [Test]
     public void CellIsEmpty()
     {
-        Grid grid = new Grid(".@." +
-                             "@@.");
-        var paperRoll = grid.Get(new Position(1, 1));
+        Grid grid = new Grid([".@.","@@."]);
+        var paperRoll = grid.Get(new Position(0,0));
         Assert.That(paperRoll.State, Is.EqualTo(PaperRollState.Empty));
     }
     
     [Test]
     public void CellIsFull()
     {
-        Grid grid = new Grid(".@." +
-                             "@@.");
-        var paperRoll = grid.Get(new Position(1, 2));
+        Grid grid = new Grid([".@.","@@."]);
+        var paperRoll = grid.Get(new Position(0,1));
         Assert.That(paperRoll.State, Is.EqualTo(PaperRollState.Full));
     }
     
     [Test]
     public void GetNeighboursOfCell()
     {
-        Grid grid = new Grid(".@." +
-                             "@@.");
-        var neighbours = grid.GetNeighbours(new Position(1, 2)).ToList();
+        Grid grid = new Grid([
+            ".@.",
+            "@@."]);
+        var neighbours = grid.GetNeighbours(new Position(1,2)).ToList();
         Assert.That(neighbours, Is.Not.Empty);
         Assert.That(neighbours, Has.Count.EqualTo(2));
+    }
+    
+    [Test]
+    public void CanBeAccessedByAForklift()
+    {
+        Grid grid = new Grid([
+            ".@@@",
+            "@@@."]);
+        Assert.That(grid.CanBeAccessedByAForklift(new Position(0, 1)),Is.False);
+        Assert.That(grid.CanBeAccessedByAForklift(new Position(0, 3)),Is.True);
+    }
+    
+    [Test]
+    public void CanBeAccessedByAForkliftCount()
+    {
+        Grid grid = new Grid([
+            ".@@@",
+            "@@@."]);
+        Assert.That(grid.CanBeAccessedByAForkliftCount(),Is.EqualTo(2));
+    }
+    
+    [Test]
+    public void PassesAllDay4TestResults()
+    {
+        Grid grid = new Grid([
+            "..@@.@@@@.",
+            "@@@.@.@.@@",
+            "@@@@@.@.@@",
+            "@.@@@@..@.",
+            "@@.@@@@.@@",
+            ".@@@@@@@.@",
+            ".@.@.@.@@@",
+            "@.@@@.@@@@",
+            ".@@@@@@@@.",
+            "@.@.@@@.@."]);
+        Assert.That(grid.CanBeAccessedByAForkliftCount(),Is.EqualTo(13));
+    }
+    
+    [Test]
+    public void ClaculateTheSolutionForDay4Part1()
+    {
+        const string day4InputTxt = "Day4Input.txt";
+        Grid grid = new Grid(File.ReadAllLines(day4InputTxt).ToList());
         
+        Assert.That(grid.CanBeAccessedByAForkliftCount(),Is.EqualTo(1395));
     }
     
     
@@ -66,6 +108,12 @@ public class Grid
         Cells = gridLayout.Split("\n").ToList();
         
     }
+    
+    public Grid(List<string> rows)
+    {
+        Cells = rows;
+        
+    }
 
     public int Rows()
     {
@@ -83,11 +131,15 @@ public class Grid
     {
         for (var x = 0; x < Cells.Count; x++)
         {
-            for (var y = 0; y < Cells.Count; y++)
+            for (var y = 0; y < Cells[x].Length; y++)
             {
+                if (x == position.Row && y == position.Column)
+                {
+                    continue;
+                }
                 if (x <= position.Row + 1 && x >= position.Row - 1)
                 {
-                    if (y <= position.Row + 1 && y >= position.Row - 1)
+                    if (y <= position.Column + 1 && y >= position.Column - 1)
                     {
                         if (Cells[x][y] == FullPaperRoll)
                         {
@@ -98,6 +150,38 @@ public class Grid
                 }
             }
         }
+    }
+
+    public bool CanBeAccessedByAForklift(Position position)
+    {
+        if (!IsPositionFullPaperRoll(position))
+        {
+            return false;
+        }
+        return GetNeighbours(position).ToList().Count < 4;
+    }
+
+    private bool IsPositionFullPaperRoll(Position position)
+    {
+        return Cells[position.Row][position.Column] == FullPaperRoll;
+    }
+    
+    public int CanBeAccessedByAForkliftCount()
+    {
+        var result = 0;
+        for (var x = 0; x < Cells.Count; x++)
+        {
+            var row = Cells[x];
+            for (var y = 0; y < row.Length; y++)
+            {
+                if (CanBeAccessedByAForklift(new Position(x, y)))
+                {
+                    result++;
+                }
+            }
+        }
+
+        return result;
     }
 }
 
