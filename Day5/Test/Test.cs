@@ -86,33 +86,63 @@ public class Tests
     [Test]
     public void ReadsRangesAndIngredientsFromFile()
     {
-        var splitInput = File.ReadAllText("Day5Input.txt").Split("\n").ToList();
-        var startOfIngredients = false;
         FridgeSystem fridge = new FridgeSystem();
         FreshIngredientRanges ranges = new FreshIngredientRanges();
-        foreach (var line in splitInput)
-        {
-            if (string.IsNullOrEmpty(line))
-            {
-                startOfIngredients = true;
-                fridge.Ranges = ranges;
-                continue;
-            }
-            if (!startOfIngredients)
-            {
-                ranges.WithFreshIngredientRange(new IngredientRange(line));
-            }
-            else
-            {
-                fridge.WithIngredient(new Ingredient(line));
-            }
-        }
-        
+        const string testInputFilePath = "Day5TestInput.txt";
+        FillFridgeAndRanges(testInputFilePath, fridge, ranges);
+
         Assert.That(fridge.FreshIngredientCount, Is.EqualTo(3));
     }
     
+    [Test]
+    public void ComputesDay5Part1Correctly()
+    {
+        FridgeSystem fridge = new FridgeSystem();
+        FreshIngredientRanges ranges = new FreshIngredientRanges();
+        const string inputFilePath = "Day5Input.txt";
+        FillFridgeAndRanges(inputFilePath, fridge, ranges);
+
+        Assert.That(fridge.FreshIngredientCount, Is.EqualTo(868));
+    }
     
+    [Test]
+    public void ComputesDay5Part2Correctly()
+    {
+        FreshIngredientRanges ranges = new FreshIngredientRanges();
+        const string inputFilePath = "Day5Input.txt";
+        var ingredientRanges = File.ReadAllText(inputFilePath).Split("\n").ToList();
+        foreach (var range in ingredientRanges)
+        {
+            if (range == "\r") break; 
+            ranges.WithFreshIngredientRange(new IngredientRange(range));
+        }
+
+        Assert.That(ranges.CalculateNumber(), Is.EqualTo(354143734113772));
+    }
+
+    private static void FillFridgeAndRanges(string testInputFilePath, FridgeSystem fridge, FreshIngredientRanges ranges)
+    {
+        var splitInput = File.ReadAllText(testInputFilePath).Split("\n").ToList();
+        foreach (var line in splitInput)
+        {
+            if (string.IsNullOrEmpty(line.Replace("\r","ingredients")))
+            {
+                fridge.Ranges = ranges;
+                break;
+            }
+            ranges.WithFreshIngredientRange(new IngredientRange(line));
+        }
+        
+        var ingredients = splitInput.Slice(splitInput.IndexOf("ingredients"), splitInput.Count - splitInput.IndexOf("ingredients"));
+        foreach (var ingredient in ingredients)
+        {
+            fridge.WithIngredient(new Ingredient(ingredient));
+        }
+        
+    }
 }
+
+
 
 public class FridgeSystem
 {
@@ -146,29 +176,59 @@ public class FridgeSystem
 
 public class Ingredient
 {
-    public int Value { get; set; }
+    public long Value { get; set; }
 
-    public Ingredient(int value)
+    public Ingredient(long value)
     {
         Value = value;
     }
 
     public Ingredient(string stringIngredient)
     {
-        Value = int.Parse(stringIngredient);
+        Value = long.Parse(stringIngredient);
     }
 }
 
 public class FreshIngredientRanges
 {
-    public FreshIngredientRanges()
-    {
-    }
+
+    public long ValidFreshIngredientValues { get; set; } = 0;
 
     public FreshIngredientRanges WithFreshIngredientRange(IngredientRange range)
     {
+        
         Ranges.Add(range);
         return this;
+    }
+    
+    public long CalculateNumber()
+    {
+        var ListOfMergedRanges = new List<IngredientRange>();
+        var sortedRanges = Ranges.OrderBy(r => r.Start).ToList();
+        var currentRange = sortedRanges[0];
+        foreach (var range in sortedRanges)
+        {
+            if (range.Start > currentRange.End)
+            {
+                ListOfMergedRanges.Add(currentRange);
+                currentRange = range;
+                continue;
+            }
+            if (range.Start >= currentRange.Start && range.Start <= currentRange.End)
+            {
+                if (range.End > currentRange.End)
+                    currentRange = new IngredientRange(currentRange.Start, range.End);
+            }
+        }
+        ListOfMergedRanges.Add(currentRange);
+
+        long result = 0;
+        foreach (var range in ListOfMergedRanges)
+        {
+            result += range.End - range.Start + 1;
+        }
+
+        return result;
     }
 
     public List<IngredientRange> Ranges { get; set; } = [];
@@ -190,7 +250,7 @@ public class FreshIngredientRanges
 
 public class IngredientRange
 {
-    public IngredientRange(int start, int end)
+    public IngredientRange(long start, long end)
     {
         Start = start;
         End = end;
@@ -199,10 +259,12 @@ public class IngredientRange
     public IngredientRange(string stringRange)
     {
         var splitRange = stringRange.Split("-");
-        Start = int.Parse(splitRange[0]);
-        End = int.Parse(splitRange[1]);
+        Start = long.Parse(splitRange[0]);
+        End = long.Parse(splitRange[1]);
     }
 
-    public int Start { get; set; }
-    public int End { get; set; }
+    public long Start { get; set; }
+    public long End { get; set; }
 }
+
+
